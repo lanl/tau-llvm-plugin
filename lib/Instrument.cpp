@@ -290,11 +290,15 @@ struct ProfLoop : public LoopPass {
     }
   }
 
+//  a convenience newline string for indented stuff
+#define NL_IND "\n  "
+
   virtual bool runOnLoop(Loop *L, LPPassManager &LPM){
-    errs() << "runOnLoop\n";
-    errs() << L->isAnnotatedParallel() << "\n";
-    errs() << shouldInstrument(L) << "\n";
+    errs() << "runOnLoop";
+    errs() << NL_IND << "parallel?   " << L->isAnnotatedParallel();
+    errs() << NL_IND << "instrument? " << shouldInstrument(L);
     process(L);
+    errs () << "\n";
     return true;
   }
 
@@ -313,15 +317,29 @@ struct ProfLoop : public LoopPass {
     Loop::LocRange lr = L->getLocRange();
     const DebugLoc &start = lr.getStart(), &end = lr.getEnd();
 
-    errs() << "Found loop with depth " << L->getLoopDepth() << "\n";
+    errs() << NL_IND << "Found loop with depth " << L->getLoopDepth();
+    errs() << NL_IND;
     start.print(errs());
-    errs() << "\n";
+    errs() << NL_IND;
     end.print(errs());
-    errs() << "\n\n";
 
     return true;
   }
+
+  void showAllLocs(Loop *L) {
+    if (MDNode *LoopID = L->getLoopID()) {
+      for (unsigned i = 1, ie = LoopID->getNumOperands(); i < ie; ++i) {
+        if (DILocation *loc = dyn_cast<DILocation>(LoopID->getOperand(i))) {
+          DebugLoc(loc).print(errs());
+          errs() << NL_IND;
+        }
+      }
+    }
+  }
 };
+
+// undefine the convenience
+#undef NL_IND
 
 } // namespace
 
