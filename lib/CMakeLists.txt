@@ -1,5 +1,6 @@
 # For use with C programs
-add_llvm_loadable_module(TAU_Profiling
+add_llvm_library(TAU_Profiling
+  MODULE
   Instrument.cpp
 
   DEPENDS
@@ -9,7 +10,8 @@ add_llvm_loadable_module(TAU_Profiling
   )
 
 # For use with C++ programs
-add_llvm_loadable_module(TAU_Profiling_CXX
+add_llvm_library(TAU_Profiling_CXX
+  MODULE
   Instrument.cpp
 
   DEPENDS
