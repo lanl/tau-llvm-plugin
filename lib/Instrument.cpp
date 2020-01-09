@@ -122,7 +122,7 @@ static StringRef normalize_name(StringRef mangled_name) {
    * \param ctx The LLVMContext
    * \param mdl The Module in which the function will be used
    */
-  static Constant *getVoidFunc(StringRef funcname, LLVMContext &context, Module *module) {
+ static FunctionCallee getVoidFunc(StringRef funcname, LLVMContext &context, Module *module) {
 
     // Void return type
     Type *retTy = Type::getVoidTy(context);
@@ -259,9 +259,9 @@ static StringRef normalize_name(StringRef mangled_name) {
       // Declare and get handles to the runtime profiling functions
       auto &context = func.getContext();
       auto *module = func.getParent();
-      Constant
-        *onCallFunc = getVoidFunc(TauStartFunc, context, module),
-        *onRetFunc = getVoidFunc(TauStopFunc, context, module);
+      FunctionCallee
+        onCallFunc = getVoidFunc(TauStartFunc, context, module),
+        onRetFunc = getVoidFunc(TauStopFunc, context, module);
 
       bool mutated = false;
       for (auto &pair : calls) {
